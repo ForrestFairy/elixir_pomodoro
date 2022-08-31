@@ -17,6 +17,7 @@ defmodule ElixirPomodoroWeb.Router do
   scope "/", ElixirPomodoroWeb do
     pipe_through :browser
 
+    live "/", PomodoroLive
     get "/", PomodoroController, :index
   end
 

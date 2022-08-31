@@ -1,6 +1,10 @@
 /* This file is for your main application CSS */
 @import "./phoenix.css";
 
+#timer{
+  height: 200px;
+  font-size: 100px;
+}
 /* Alerts and form errors used by phx.new */
 .alert {
   padding: 15px;
