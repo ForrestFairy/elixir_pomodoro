@@ -11,7 +11,8 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
     socket = assign(socket,
       timer: 0,
       time: Timer.basic(),
-      break: false
+      break: false,
+      active: false
       )
     {:ok, socket}
   end
@@ -23,32 +24,53 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
     <%= if @break do %>
       <button phx-click="break">Break?</button>
     <% end %>
+    <%= if @active do %>
+      <br>
+      <button phx-click="pause">Pause</button>
+    <% end %>
     """
   end
 
   def handle_event("start", _, socket) do
     {:ok, timer} = :timer.send_interval(1000, self(), :tick)
-    socket = assign(socket, :timer, timer)
+    socket = socket
+    |> assign(:timer, timer)
+    |> assign(:active, true)
     {:noreply, socket}
   end
 
   def handle_event("break", _, socket) do
-    socket = assign(socket, time: Timer.break())
+    socket = socket
+    |> assign(socket, time: Timer.break())
+    |> assign(socket, active: true)
     send(self(), :start)
     {:noreply, socket}
   end
 
+  def handle_event("pause", _, socket) do
+    socket = assign(socket, :active, false)
+    {:noreply, socket}
+  end
+
   def handle_info(:tick, socket) do
-    socket = update(socket, :time, &(Time.add(&1, -@second)))
-    cond do
-      Time.compare(socket.assigns.time, ~T[00:00:00]) == :eq ->
-        :timer.cancel(socket.assigns.timer)
-        send(self(), :stop)
-        {:noreply, socket}
+    # Time change here ---
+    case socket.assigns.active do
       true ->
+        socket = update(socket, :time, &(Time.add(&1, -@second)))
+        cond do
+            Time.compare(socket.assigns.time, ~T[00:00:00]) == :eq ->
+              :timer.cancel(socket.assigns.timer)
+              send(self(), :stop)
+              {:noreply, socket}
+            true ->
+              {:noreply, socket}
+        end
+      false ->
+        :timer.cancel(socket.assigns.timer)
         {:noreply, socket}
     end
-    {:noreply, socket}
+
+
   end
 
   def handle_info(:stop, socket) do
