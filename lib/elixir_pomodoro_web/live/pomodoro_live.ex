@@ -11,7 +11,7 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
     socket = assign(socket,
       timer: 0,
       time: Timer.basic(),
-      break: false,
+      break?: false,
       active: false
       )
     {:ok, socket}
@@ -21,7 +21,7 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
     ~H"""
     <h1>This is your pomodoro:</h1>
     <div id="timer"><%= Timer.show(@time) %></div> <button phx-click="start">Start</button>
-    <%= if @break do %>
+    <%= if @break? do %>
       <button phx-click="break">Break?</button>
     <% end %>
     <%= if @active do %>
@@ -41,8 +41,8 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
 
   def handle_event("break", _, socket) do
     socket = socket
-    |> assign(socket, time: Timer.break())
-    |> assign(socket, active: true)
+    |> assign(time: Timer.break())
+    |> assign(active: true)
     send(self(), :start)
     {:noreply, socket}
   end
@@ -74,7 +74,7 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
   end
 
   def handle_info(:stop, socket) do
-    socket = assign(socket, time: Timer.basic(), break: not socket.assigns.break)
+    socket = assign(socket, time: Timer.basic(), break?: not socket.assigns.break?)
     {:noreply, socket}
   end
 
