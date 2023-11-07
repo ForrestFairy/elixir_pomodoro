@@ -3,7 +3,7 @@ defmodule ElixirPomodoroWeb.PomodoroLive do
   alias ElixirPomodoro.Timer
 
   @second 1
-  @minute 60
+  # @minute 60
 
   def mount(_params, _session, socket) do
 
