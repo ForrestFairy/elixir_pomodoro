@@ -1,6 +1,9 @@
 # ElixirPomodoro
 
-Simplest app I can think using Phoenix framework
+Simplest app I can think of using Phoenix framework
+
+
+# How to run
 
 To start your Phoenix server:
 
